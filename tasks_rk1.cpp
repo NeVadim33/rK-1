@@ -52,6 +52,8 @@ int WorkWithFile::randomRange(int low, int high)
 }
 void WorkWithFile::writeStatInfoToFile(const char *outFile)
 {
+	//функция только должна записывать данные в файл, а не создавать 
+	//поэтому тесты не проходит....
     prepareTestFile("sourceFile_task1.txt");
     ReadFromFile("sourceFile_task1.txt");
 
@@ -76,6 +78,8 @@ WorkWithFile::~WorkWithFile()
 ////////////////////
 
 char binNumb[32];
+//тесты не проходит...
+//надо исправить таким образом, чтобы старший бит был слева младший справа
 char* convertDecToBin(int num) {
    memset(binNumb, 0x00, 32 * sizeof(int));
 
@@ -120,7 +124,7 @@ void WritetoFile3(char* numb,const char* filename){
     }
     f.close();
 }
-
+//функция выдаёт странный результат... тесты не проходит
 char* convertBinToHex( const char* str)
 {
 char* k = new char[10];
@@ -436,7 +440,7 @@ void LinkedList:: show ()
        }
        delete tempnode;
    }
-
+//прототипы функции для 8ой задачи имеют другие имена... надо исправить! 
 void LinkedList:: Writetofilehead()
     {
     int i=1;

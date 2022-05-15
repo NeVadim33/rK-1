@@ -32,28 +32,28 @@ void WorkWithFile::ReadFromFile(const char *fileName)
 
     f.close();
 }
-void WorkWithFile::prepareTestFile(const char *filename)
-{
-    QFile f2(filename);
-    if(f2.open(QIODevice::WriteOnly))
-    {
-        QTextStream out(&f2);
-        for(int i =0; i<100;i++)
-        {
-            const char ch = randomRange('a', 'z');
-                    out << ch;
-        }
-    }
-    f2.close();
-}
-int WorkWithFile::randomRange(int low, int high)
-{
-    return rand() % (high - low + 1) + low;
-}
+//void WorkWithFile::prepareTestFile(const char *filename)
+//{
+//    QFile f2(filename);
+//    if(f2.open(QIODevice::WriteOnly))
+//    {
+//        QTextStream out(&f2);
+//        for(int i =0; i<100;i++)
+//        {
+//            const char ch = randomRange('a', 'z');
+//                    out << ch;
+//        }
+//    }
+//    f2.close();
+//}
+//int WorkWithFile::randomRange(int low, int high)
+//{
+//    return rand() % (high - low + 1) + low;
+//}
 void WorkWithFile::writeStatInfoToFile(const char *outFile)
 {
-    prepareTestFile("sourceFile_task1.txt");
-    ReadFromFile("sourceFile_task1.txt");
+    //prepareTestFile("sourceFile_task1.txt");
+    ReadFromFile("sourceFile_task1");
 
     int ar[256];
     memset(&ar[0], 0x00, sizeof(int) * 256);
@@ -82,9 +82,24 @@ char* convertDecToBin(int num) {
    for (int i = 0; i < 32; i++) {
        binNumb[i] = ((num & 1 << i)) ? 0x31 : 0x30;
    }
+   int count = 31;
+   char temp[32];
+   for(int i=0;i<32;i++,count--)
+   {
+
+       temp[i]=binNumb[count];
+
+   }
+   for(int i=0;i<32;i++)
+   {
+
+       binNumb[i]=temp[i];
+
+   }
+
    return binNumb;
 }
-void WritetoFile(char* numb,const char* filename){
+void writeToFile(char* numb,const char* filename){
    QFile f(filename);
    if(f.open(QIODevice::WriteOnly))
    {
@@ -100,19 +115,108 @@ void WritetoFile(char* numb,const char* filename){
 
 void result(int i) {
    convertDecToBin(i);
-   WritetoFile(binNumb,"result_task2");
+   writeToFile(binNumb,"result_task2");
    qDebug() << "task 2 :" <<binNumb;
 
 }
 
-//////////////////////
+/////////////////////
 
+char* convertBinToHex( const  char* binNum)
+{
+    int k=0;
+    int temp[32];
+    char* tempforcheck = new  char[4];
+    tempforcheck[0]='2';
+    tempforcheck[1]='2';
+    tempforcheck[2]='2';
+    tempforcheck[3]='2';
+    for(int i=0;i<159;i++)
+    {
+        for(int j=0;j<4;j++)
+        {
+           tempforcheck[j]=binNum[i];
+
+           if(tempforcheck[0] == '0' && tempforcheck[1] == 'x'&& tempforcheck[2] == '3'&& tempforcheck[3] == '1')
+           {
+
+               temp[k]=1;
+           }
+           if(tempforcheck[0] == '0' && tempforcheck[1] == 'x'&& tempforcheck[2] == '3'&& tempforcheck[3] == '0')
+           {
+
+               temp[k]=0;
+           }
+
+           if(j==3)
+           {
+              i = i+1;
+              k++;
+              tempforcheck[0]='2';
+              tempforcheck[1]='2';
+              tempforcheck[2]='2';
+              tempforcheck[3]='2';
+           }
+           else
+           {
+           i++;
+           }
+
+        }
+    }
+    int summ=0;
+    int up =31;
+    char* resulttask3= new char[32];
+    for(int i=0;i<32;i++)
+    {
+        resulttask3[i]='0';
+    }
+    int count=0;
+    int c;
+    char* albeforeten= new char[10]{'0','1','2','3','4','5','6','7','8','9'};
+    char* alafterten= new char[6]{'A','B','C','D','E','F'};
+    for(int i=0 ;i<32;i++,up--,count++)
+    {
+       summ +=  temp[i] * pow(2,up);
+    } 
+   count =0;
+    while(summ!=0)
+    {
+
+         c = abs(summ % 16);
+         if(c<10)
+         {
+             resulttask3[count]= albeforeten[c];
+         }
+         else
+         {
+             resulttask3[count]= alafterten[c-10];
+         }
+        summ/=16;
+        count++;
+    }
+    char tmp[32];
+    count=31;
+    for(int i=0;i<32;i++,count--)
+    {
+        tmp[i]=resulttask3[count];
+    }
+    for(int i=0;i<32;i++,count--)
+    {
+        resulttask3[i]= tmp[i];
+    }
+    delete [] albeforeten;
+    delete [] alafterten;
+    delete [] tempforcheck;
+    return resulttask3;
+
+}
 void WritetoFile3(char* numb,const char* filename){
     QFile f(filename);
     if(f.open(QIODevice::WriteOnly))
     {
         QTextStream out (&f);
-        for(int i =0;i<10;i++)
+        for(int i =0;i<32;i++)
         {
            out << numb[i];
         }
@@ -121,233 +225,6 @@ void WritetoFile3(char* numb,const char* filename){
     f.close();
 }
 
-char* convertBinToHex( const char* str)
-{
-char* k = new char[10];
-
-k[0]='0';
-k[1]='x';
-int countfork =2;
-int countmain = 0;
-int count =0;
-char* temp= new char[4];
-char* tempmain= new char[4];
-for(int i =0; i<159;i++)
-{
-temp[count]= str[i];
-count++;
-if(count==4 ||str[i]== NULL)
-{
-    count = 0;
-    i++;
-//        for (int i=0;i<4;i++)
-//        {
-//            cout<<temp[i];
-//        }
-//        cout<<endl;
-  if(temp[0]=='0' && temp[1]=='x' && temp[2]=='3' && temp[3]=='1')
-  {
-      tempmain[countmain]='1';
-      countmain++;
-      if(countmain==4 ||str[i]==NULL)
-      {    /*for(int i=0;i<4;i++)
-          {
-              cout<<tempmain[i];
-              if (i==3)
-                  cout<<endl;
-          }*/
-          countmain=0;
-
-          if(tempmain[0]=='0' && tempmain[1]=='0' && tempmain[2]=='0' && tempmain[3]=='0')
-          {
-              k[countfork]='0';
-              countfork++;
-           }
-          if(tempmain[0]=='0' && tempmain[1]=='0' && tempmain[2]=='0' && tempmain[3]=='1')
-          {
-              k[countfork]='1';
-              countfork++;
-           }
-          if(tempmain[0]=='0' && tempmain[1]=='0' && tempmain[2]=='1' && tempmain[3]=='0')
-          {
-              k[countfork]='2';
-              countfork++;
-           }
-          if(tempmain[0]=='0' && tempmain[1]=='0' && tempmain[2]=='1' && tempmain[3]=='1')
-          {
-              k[countfork]='3';
-              countfork++;
-           }
-          if(tempmain[0]=='0' && tempmain[1]=='1' && tempmain[2]=='0' && tempmain[3]=='0')
-          {
-              k[countfork]='4';
-              countfork++;
-           }
-          if(tempmain[0]=='0' && tempmain[1]=='1' && tempmain[2]=='0' && tempmain[3]=='1')
-          {
-              k[countfork]='5';
-              countfork++;
-           }
-
-          if(tempmain[0]=='0' && tempmain[1]=='1' && tempmain[2]=='1' && tempmain[3]=='0')
-          {
-              k[countfork]='6';
-              countfork++;
-           }
-          if(tempmain[0]=='0' && tempmain[1]=='1' && tempmain[2]=='1' && tempmain[3]=='1')
-          {
-              k[countfork]='7';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='0' && tempmain[2]=='0' && tempmain[3]=='0')
-          {
-              k[countfork]='8';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='0' && tempmain[2]=='0' && tempmain[3]=='1')
-          {
-              k[countfork]='9';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='0' && tempmain[2]=='1' && tempmain[3]=='0')
-          {
-              k[countfork]='A';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='0' && tempmain[2]=='1' && tempmain[3]=='1')
-          {
-              k[countfork]='B';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='1' && tempmain[2]=='0' && tempmain[3]=='0')
-          {
-              k[countfork]='C';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='1' && tempmain[2]=='0' && tempmain[3]=='1')
-          {
-              k[countfork]='D';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='1' && tempmain[2]=='1' && tempmain[3]=='0')
-          {
-              k[countfork]='E';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='1' && tempmain[2]=='1' && tempmain[3]=='1')
-          {
-              k[countfork]='F';
-              countfork++;
-           }
-      }
-  }
-
-  if(temp[0]=='0' && temp[1]=='x' && temp[2]=='3' && temp[3]=='0')
-  {
-      tempmain[countmain]='0';
-      countmain++;
-      if(countmain==4)
-      {
-//              for(int i=0;i<4;i++)
-//              {
-//                  cout<<tempmain[i];
-//                  if (i==3)
-//                      cout<<endl;
-//              }
-
-          countmain=0;
-          if(tempmain[0]=='0' && tempmain[1]=='0' && tempmain[2]=='0' && tempmain[3]=='0')
-          {
-              k[countfork]='0';
-              countfork++;
-           }
-          if(tempmain[0]=='0' && tempmain[1]=='0' && tempmain[2]=='0' && tempmain[3]=='1')
-          {
-              k[countfork]='1';
-              countfork++;
-           }
-          if(tempmain[0]=='0' && tempmain[1]=='0' && tempmain[2]=='1' && tempmain[3]=='0')
-          {
-              k[countfork]='2';
-              countfork++;
-           }
-          if(tempmain[0]=='0' && tempmain[1]=='0' && tempmain[2]=='1' && tempmain[3]=='1')
-          {
-              k[countfork]='3';
-              countfork++;
-           }
-          if(tempmain[0]=='0' && tempmain[1]=='1' && tempmain[2]=='0' && tempmain[3]=='0')
-          {
-              k[countfork]='4';
-              countfork++;
-           }
-          if(tempmain[0]=='0' && tempmain[1]=='1' && tempmain[2]=='0' && tempmain[3]=='1')
-          {
-              k[countfork]='5';
-              countfork++;
-           }
-
-          if(tempmain[0]=='0' && tempmain[1]=='1' && tempmain[2]=='1' && tempmain[3]=='0')
-          {
-              k[countfork]='6';
-              countfork++;
-           }
-          if(tempmain[0]=='0' && tempmain[1]=='1' && tempmain[2]=='1' && tempmain[3]=='1')
-          {
-              k[countfork]='7';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='0' && tempmain[2]=='0' && tempmain[3]=='0')
-          {
-              k[countfork]='8';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='0' && tempmain[2]=='0' && tempmain[3]=='1')
-          {
-              k[countfork]='9';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='0' && tempmain[2]=='1' && tempmain[3]=='0')
-          {
-              k[countfork]='A';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='0' && tempmain[2]=='1' && tempmain[3]=='1')
-          {
-              k[countfork]='B';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='1' && tempmain[2]=='0' && tempmain[3]=='0')
-          {
-              k[countfork]='C';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='1' && tempmain[2]=='0' && tempmain[3]=='1')
-          {
-              k[countfork]='D';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='1' && tempmain[2]=='1' && tempmain[3]=='0')
-          {
-              k[countfork]='E';
-              countfork++;
-           }
-          if(tempmain[0]=='1' && tempmain[1]=='1' && tempmain[2]=='1' && tempmain[3]=='1')
-          {
-              k[countfork]='F';
-              countfork++;
-           }
-      }
-  }
-}
-}
-for(int i=0;i<10;i++)
-{
-cout<< k[i];
-}
-WritetoFile3(k,"result_task3");
-return k;
-}
 
 /////////////////////////
 
@@ -437,7 +314,7 @@ void LinkedList:: show ()
        delete tempnode;
    }
 
-void LinkedList:: Writetofilehead()
+void LinkedList:: WriteToFileFromHead()
     {
     int i=1;
         Node* tempnode = head;
@@ -455,7 +332,7 @@ void LinkedList:: Writetofilehead()
 f.close();
     }
 
-void LinkedList:: Writetofiletail()
+void LinkedList:: WriteToFileFromTail()
     {
     int i=1;
         Node* tempnode = tail;

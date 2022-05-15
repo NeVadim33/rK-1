@@ -9,11 +9,11 @@
 #include <QPair>
 #include <QList>
 char* convertDecToBin(int num) ;
-void WritetoFile(char* numb);   ///task2
+void writeToFile(char* numb);   ///task2
 void result(int i);
 
 
-char* convertBinToHex( const char* str);
+char* convertBinToHex(const char* binNum);
 void WritetoFile3(char* numb,const char* filename); /// task3
 
 
@@ -63,8 +63,8 @@ public:
       void push_back (const char* p);
       void show();
       void insert(const char* p, int position);
-       void Writetofilehead();
-       void Writetofiletail();
+       void WriteToFileFromHead();
+       void WriteToFileFromTail();
 };                                                        //task 6
 
 
@@ -76,9 +76,9 @@ class WorkWithFile
 private:
     QByteArray fileData;
     void ReadFromFile(const char* fileName);
-     void  prepareTestFile(const char* filename);
+    // void  prepareTestFile(const char* filename);
      void WriteToFile(int ar[],const char* outFile);
-     int randomRange(int low, int high);
+    // int randomRange(int low, int high);
 public:
     WorkWithFile();
     ~WorkWithFile();
